@@ -5,7 +5,7 @@
 #include <concurrent_vector.h>
 #include <thread>
 
-Solver::Solver(const std::vector<Checker*>& checkers)
+Solver::Solver(std::vector<Checker>& checkers)
 	:m_checkers(checkers)
 {
 }
@@ -18,22 +18,22 @@ Solver::~Solver(void)
 std::vector<std::vector<Checker>> Solver::Solve()
 {
 	auto allSolutions = concurrency::concurrent_vector<std::vector<Checker>>();
-	concurrency::parallel_for_each(begin(m_checkers),end(m_checkers), [&](Checker * c) {
+	concurrency::parallel_for_each(begin(m_checkers),end(m_checkers), [&](Checker& checker) {
 		std::vector<Checker> checkers;
 
 		for(auto c : m_checkers)
-			checkers.push_back((*c));
+			checkers.push_back(c);
 
 		std::vector<std::vector<Checker>> solutions;
-
+		auto board = std::vector<Checker*>(16);
+		
 		for (int i = 0; i < 4; i++)
 		{
-			auto board = std::vector<Checker*>(16);
-			board[0] = c;
+			board[0] = &checker;
 
 			BuildSolutionsRecursively(board, 0, checkers, solutions);
 
-			c->TurnRight();
+			board[0]->TurnRight();
 		}
 
 		for(auto& solution : solutions)
@@ -55,7 +55,7 @@ std::vector<std::vector<Checker>> Solver::Solve()
 void Solver::BuildSolutionsRecursively(std::vector<Checker*>& board, int solutionIndex, std::vector<Checker>& checkers, std::vector<std::vector<Checker>>& solutions)
 {
 	auto nextIndex = solutionIndex + 1;
-	auto matchingCheckers = FindMatchingChecker(board, solutionIndex, checkers);
+	auto matchingCheckers = FindMatchingCheckers(board, solutionIndex, checkers);
 	for (auto nextChecker : matchingCheckers)
 	{
 		board[nextIndex] = &nextChecker;
@@ -63,7 +63,7 @@ void Solver::BuildSolutionsRecursively(std::vector<Checker*>& board, int solutio
 		if (nextIndex == 15)
 		{
 			std::vector<Checker> solution;
-			
+
 			for(auto c : board)
 				solution.push_back(*c);
 
@@ -79,7 +79,7 @@ void Solver::BuildSolutionsRecursively(std::vector<Checker*>& board, int solutio
 	}
 }
 
-std::vector<Checker> Solver::FindMatchingChecker(std::vector<Checker*> board, int solutionIndex, std::vector<Checker>& checkers)
+std::vector<Checker> Solver::FindMatchingCheckers(std::vector<Checker*> board, int solutionIndex, std::vector<Checker>& checkers)
 {
 	std::vector<Checker> matches;
 	std::vector<Checker*> unusedCheckers;
@@ -97,7 +97,7 @@ std::vector<Checker> Solver::FindMatchingChecker(std::vector<Checker*> board, in
 
 	auto thisIndex = solutionIndex + 1;
 
-	for (auto unusedProfessorChecker : unusedCheckers)
+	for (auto unusedChecker : unusedCheckers)
 	{
 		for (int i = 0; i < 4; i++)
 		{
@@ -105,10 +105,10 @@ std::vector<Checker> Solver::FindMatchingChecker(std::vector<Checker*> board, in
 			{
 				auto leftChecker = board[solutionIndex];
 
-				if (leftChecker->GetRight().GetColor() == unusedProfessorChecker->GetLeft().GetColor() &&
-					leftChecker->GetRight().GetBodyPart() != unusedProfessorChecker->GetLeft().GetBodyPart())
+				if (leftChecker->GetRight().GetColor() == unusedChecker->GetLeft().GetColor() &&
+					leftChecker->GetRight().GetBodyPart() != unusedChecker->GetLeft().GetBodyPart())
 				{
-					matches.push_back(*unusedProfessorChecker);
+					matches.push_back(*unusedChecker);
 				}
 			}
 
@@ -116,10 +116,10 @@ std::vector<Checker> Solver::FindMatchingChecker(std::vector<Checker*> board, in
 			{
 				auto topChecker = board[thisIndex - 4];
 
-				if (topChecker->GetBottom().GetColor() == unusedProfessorChecker->GetTop().GetColor()
-					&& topChecker->GetBottom().GetBodyPart() != unusedProfessorChecker->GetTop().GetBodyPart())
+				if (topChecker->GetBottom().GetColor() == unusedChecker->GetTop().GetColor()
+					&& topChecker->GetBottom().GetBodyPart() != unusedChecker->GetTop().GetBodyPart())
 				{
-					matches.push_back(*unusedProfessorChecker);
+					matches.push_back(*unusedChecker);
 				}
 			}
 
@@ -128,16 +128,16 @@ std::vector<Checker> Solver::FindMatchingChecker(std::vector<Checker*> board, in
 				auto leftChecker = board[thisIndex - 1];
 				auto topChecker = board[thisIndex - 4];
 
-				if (leftChecker->GetRight().GetColor() == unusedProfessorChecker->GetLeft().GetColor() &&
-					leftChecker->GetRight().GetBodyPart() != unusedProfessorChecker->GetLeft().GetBodyPart() &&
-					topChecker->GetBottom().GetColor() == unusedProfessorChecker->GetTop().GetColor() &&
-					topChecker->GetBottom().GetBodyPart() != unusedProfessorChecker->GetTop().GetBodyPart())
+				if (leftChecker->GetRight().GetColor() == unusedChecker->GetLeft().GetColor() &&
+					leftChecker->GetRight().GetBodyPart() != unusedChecker->GetLeft().GetBodyPart() &&
+					topChecker->GetBottom().GetColor() == unusedChecker->GetTop().GetColor() &&
+					topChecker->GetBottom().GetBodyPart() != unusedChecker->GetTop().GetBodyPart())
 				{
-					matches.push_back(*unusedProfessorChecker);
+					matches.push_back(*unusedChecker);
 				}
 			}
 
-			unusedProfessorChecker->TurnRight();
+			unusedChecker->TurnRight();
 		}
 	}
 
