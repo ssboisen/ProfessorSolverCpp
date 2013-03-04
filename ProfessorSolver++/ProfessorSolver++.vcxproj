@@ -79,11 +79,20 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\%40code\rod\ProfessorSolver++\ProfessorSolver++\Checker.h" />
+    <ClInclude Include="..\..\..\..\%40code\rod\ProfessorSolver++\ProfessorSolver++\CheckerSide.h" />
+    <ClInclude Include="..\..\..\..\%40code\rod\ProfessorSolver++\ProfessorSolver++\CStopWatch.h" />
     <ClInclude Include="..\..\..\..\%40code\rod\ProfessorSolver++\ProfessorSolver++\Domain.h" />
+    <ClInclude Include="..\..\..\..\%40code\rod\ProfessorSolver++\ProfessorSolver++\Solver.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\%40code\rod\ProfessorSolver++\ProfessorSolver++\Checker.cpp" />
+    <ClCompile Include="..\..\..\..\%40code\rod\ProfessorSolver++\ProfessorSolver++\CheckerSide.cpp" />
+    <ClCompile Include="..\..\..\..\%40code\rod\ProfessorSolver++\ProfessorSolver++\CStopWatch.cpp" />
+    <ClCompile Include="..\..\..\..\%40code\rod\ProfessorSolver++\ProfessorSolver++\Domain.cpp" />
+    <ClCompile Include="..\..\..\..\%40code\rod\ProfessorSolver++\ProfessorSolver++\Solver.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

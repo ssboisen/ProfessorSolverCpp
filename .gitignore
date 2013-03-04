@@ -1,5 +1,8 @@
 Debug/
+Release/
 ipch/
+*.vspx
+*.psess
 *.*sdf
 *.user
 *.suo
