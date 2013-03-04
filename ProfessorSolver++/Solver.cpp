@@ -49,7 +49,7 @@ std::vector<std::vector<Checker>> Solver::Solve()
 		finalSolution.push_back(std::move(v));
 	}
 
-	return finalSolution;
+	return std::move(finalSolution);
 }
 
 void Solver::BuildSolutionsRecursively(std::vector<Checker*>& board, int solutionIndex, std::vector<Checker>& checkers, std::vector<std::vector<Checker>>& solutions)
